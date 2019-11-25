@@ -341,11 +341,14 @@ class Downshift extends Component {
     // the input change as soon as possible. This avoids issues with
     // preserving the cursor position.
     // See https://github.com/downshift-js/downshift/issues/217 for more info.
-    if (!isStateToSetFunction && stateToSet.hasOwnProperty('inputValue')) {
-      this.props.onInputValueChange(stateToSet.inputValue, {
-        ...this.getStateAndHelpers(),
-        ...stateToSet,
-      })
+    if (!isStateToSetFunction) {
+      const newStateToSet = this.props.stateReducer(this.state, stateToSet)
+      if (newStateToSet.hasOwnProperty('inputValue')) {
+        this.props.onInputValueChange(newStateToSet.inputValue, {
+          ...this.getStateAndHelpers(),
+          ...newStateToSet,
+        })
+      }
     }
     return this.setState(
       state => {
@@ -833,10 +836,8 @@ class Downshift extends Component {
         !!this.props.environment.document.activeElement &&
         !!this.props.environment.document.activeElement.dataset &&
         this.props.environment.document.activeElement.dataset.toggle &&
-        (this._rootNode &&
-          this._rootNode.contains(
-            this.props.environment.document.activeElement,
-          ))
+        this._rootNode &&
+        this._rootNode.contains(this.props.environment.document.activeElement)
       if (!this.isMouseDown && !downshiftButtonIsActive) {
         this.reset({type: stateChangeTypes.blurInput})
       }

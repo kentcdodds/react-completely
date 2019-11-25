@@ -250,6 +250,54 @@ test('controlled highlighted index change scrolls the item into view', () => {
   )
 })
 
+test('selecting an item calls onInputValueChange with reduced state', () => {
+  const stateReducer = (_, changes) => ({
+    ...changes,
+    selectedItem: 'foo',
+  })
+  const onInputValueChangeSpy = jest.fn((_, stateAndHelpers) => stateAndHelpers)
+  const {selectItem} = setup({
+    stateReducer,
+    onInputValueChange: onInputValueChangeSpy,
+  })
+  selectItem('bar')
+  expect(onInputValueChangeSpy).toHaveReturnedWith(
+    expect.objectContaining({selectedItem: 'foo'}),
+  )
+})
+
+test('onInputValueChange is called when reduced state includes inputValue', () => {
+  const stateReducer = (_, changes) => {
+    return {
+      ...changes,
+      inputValue: 'baz',
+    }
+  }
+  const onInputValueChangeSpy = jest.fn(() => null)
+  const {openMenu} = setup({
+    stateReducer,
+    inputValue: 'foo',
+    onInputValueChange: onInputValueChangeSpy,
+  })
+  openMenu()
+  expect(onInputValueChangeSpy).toHaveBeenCalledTimes(1)
+})
+
+test('onInputValueChange is not called when reduced state does not include inputValue', () => {
+  const stateReducer = (_, changes) => {
+    delete changes.inputValue
+    return changes
+  }
+  const onInputValueChangeSpy = jest.fn(() => null)
+  const {selectItem} = setup({
+    stateReducer,
+    inputValue: 'foo',
+    onInputValueChange: onInputValueChangeSpy,
+  })
+  selectItem('bar')
+  expect(onInputValueChangeSpy).toHaveBeenCalledTimes(0)
+})
+
 function mouseDownAndUp(node) {
   fireEvent.mouseDown(node)
   fireEvent.mouseUp(node)
