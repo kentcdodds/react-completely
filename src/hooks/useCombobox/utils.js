@@ -68,6 +68,7 @@ export const propTypes = {
   getItemId: PropTypes.func,
   inputId: PropTypes.string,
   toggleButtonId: PropTypes.string,
+  selectedItemChanged: PropTypes.func,
   stateReducer: PropTypes.func,
   onSelectedItemChange: PropTypes.func,
   onHighlightedIndexChange: PropTypes.func,
@@ -101,9 +102,13 @@ export function useControlledReducer(reducer, initialState, props) {
   const previousSelectedItemRef = useRef()
   const [state, dispatch] = useEnhancedReducer(reducer, initialState, props)
 
-  // ToDo: if needed, make same approach as selectedItemChanged from Downshift.
   if (isControlledProp(props, 'selectedItem')) {
-    if (previousSelectedItemRef.current !== props.selectedItem) {
+    if (
+      props.selectedItemChanged(
+        previousSelectedItemRef.current,
+        props.selectedItem,
+      )
+    ) {
       dispatch({
         type: ControlledPropUpdatedSelectedItem,
         inputValue: props.itemToString(props.selectedItem),
@@ -121,6 +126,7 @@ export function useControlledReducer(reducer, initialState, props) {
 
 export const defaultProps = {
   ...defaultPropsCommon,
+  selectedItemChanged: (prevItem, item) => prevItem !== item,
   getA11yStatusMessage,
   circularNavigation: true,
 }

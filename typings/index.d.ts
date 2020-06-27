@@ -418,6 +418,7 @@ export interface UseComboboxProps<Item> {
   initialSelectedItem?: Item
   defaultSelectedItem?: Item
   inputValue?: string
+  selectedItemChanged?: (prevItem: Item, item: Item) => boolean
   initialInputValue?: string
   defaultInputValue?: string
   id?: string
