@@ -59,6 +59,14 @@ describe('getItemProps', () => {
       // eslint-disable-next-line jest-dom/prefer-enabled-disabled
       expect(itemProps.disabled).toBe(true)
     })
+
+    test('omit event handlers when isItemDisabled it true', () => {
+      const {result} = renderUseSelect({isItemDisabled: () => true})
+
+      const itemProps = result.current.getItemProps({index: 0})
+      expect(itemProps.onMouseMove).toBeUndefined()
+      expect(itemProps.onClick).toBeUndefined()
+    })
   })
 
   describe('user props', () => {

@@ -110,6 +110,10 @@ function itemToString(item) {
   return item ? String(item) : ''
 }
 
+function isItemDisabled() {
+  return false
+}
+
 export function getPropTypesValidator(caller, propTypes) {
   // istanbul ignore next
   return function validate(options = {}) {
@@ -202,6 +206,7 @@ export function useControlledReducer(reducer, initialState, props) {
 }
 
 export const defaultProps = {
+  isItemDisabled,
   itemToString,
   stateReducer,
   getA11ySelectionMessage,

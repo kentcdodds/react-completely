@@ -47,6 +47,7 @@ function useSelect(userProps = {}) {
     environment,
     initialIsOpen,
     defaultIsOpen,
+    isItemDisabled,
     itemToString,
     getA11ySelectionMessage,
     getA11yStatusMessage,
@@ -501,7 +502,8 @@ function useSelect(userProps = {}) {
         ...rest,
       }
 
-      if (!rest.disabled) {
+      const notDisabled = !rest.disabled && !isItemDisabled(item)
+      if (notDisabled) {
         itemProps.onMouseMove = callAllEventHandlers(
           onMouseMove,
           itemHandleMouseMove,
