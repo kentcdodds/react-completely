@@ -5,7 +5,7 @@
   "main": "dist/downshift.cjs.js",
   "react-native": "dist/downshift.native.cjs.js",
   "module": "dist/downshift.esm.js",
-  "typings": "typings/index.d.ts",
+  "typings": "dist/typings/index.d.ts",
   "sideEffects": false,
   "scripts": {
     "build": "npm run build:web --silent && npm run build:native --silent",
@@ -73,7 +73,9 @@
   },
   "devDependencies": {
     "@babel/helpers": "^7.13.10",
+    "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^17.1.0",
+    "@rollup/plugin-typescript": "^8.2.1",
     "@testing-library/cypress": "^7.0.4",
     "@testing-library/dom": "^7.30.0",
     "@testing-library/jest-dom": "^5.11.9",
@@ -96,19 +98,30 @@
     "eslint-plugin-react": "7.23.1",
     "flow-bin": "^0.147.0",
     "flow-coverage-report": "^0.8.0",
-    "kcd-scripts": "^8.1.1",
+    "kcd-scripts": "^9.0.0",
     "npm-run-all": "^4.1.5",
     "preact": "^10.5.13",
     "react": "^16.13.1",
     "react-dom": "^17.0.2",
     "react-native": "^0.64.0",
     "react-test-renderer": "^17.0.2",
-    "rollup-plugin-babel": "^4.4.0",
     "serve": "^11.3.2",
     "start-server-and-test": "^1.12.1",
     "typescript": "^4.2.3"
   },
   "eslintConfig": {
+    "settings": {
+      "import/resolver": {
+        "node": {
+          "extensions": [
+            ".js",
+            ".jsx",
+            ".ts",
+            ".tsx"
+          ]
+        }
+      }
+    },
     "extends": "./node_modules/kcd-scripts/eslint.js",
     "rules": {
       "eqeqeq": "off",

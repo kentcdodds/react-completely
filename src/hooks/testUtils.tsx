@@ -1,7 +1,8 @@
 import React from 'react'
 import {act} from '@testing-library/react'
+import {RenderItemOptions} from './useSelect/types'
 
-const items = [
+export const items = [
   'Neptunium',
   'Plutonium',
   'Americium',
@@ -30,24 +31,27 @@ const items = [
   'Oganesson',
 ]
 
-const defaultIds = {
+export const defaultIds = {
   labelId: 'downshift-test-id-label',
   menuId: 'downshift-test-id-menu',
-  getItemId: index => `downshift-test-id-item-${index}`,
+  getItemId: (index: number) => `downshift-test-id-item-${index}`,
   toggleButtonId: 'downshift-test-id-toggle-button',
   inputId: 'downshift-test-id-input',
 }
 
-const waitForDebouncedA11yStatusUpdate = () => act(() => jest.advanceTimersByTime(200))
+export const waitForDebouncedA11yStatusUpdate = () =>
+  act(() => {
+    jest.advanceTimersByTime(200)
+  })
 
-const MemoizedItem = React.memo(function Item({
+export const MemoizedItem = React.memo(function Item<Item>({
   index,
   item,
   getItemProps,
   dataTestIds,
   stringItem,
   ...rest
-}) {
+}: RenderItemOptions<Item> & {index: number; item: Item}): JSX.Element {
   return (
     <li
       data-testid={dataTestIds.item(index)}
@@ -58,5 +62,3 @@ const MemoizedItem = React.memo(function Item({
     </li>
   )
 })
-
-export {items, defaultIds, waitForDebouncedA11yStatusUpdate, MemoizedItem}

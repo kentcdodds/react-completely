@@ -1,5 +1,12 @@
 import computeScrollIntoView from 'compute-scroll-into-view'
+import React from 'react'
+// @ts-ignore
 import {isPreact} from './is.macro'
+import {
+  A11yStatusMessageOptions,
+  DownshiftEvent,
+  GetNextIndexOptions,
+} from './types'
 
 let idCounter = 0
 
@@ -11,7 +18,7 @@ let idCounter = 0
  * @param {Function} cb the callback
  * @return {Function} a function
  */
-function cbToCb(cb) {
+function cbToCb(cb: Function | unknown): Function {
   return typeof cb === 'function' ? cb : noop
 }
 
@@ -22,7 +29,7 @@ function noop() {}
  * @param {HTMLElement} node the element that should scroll into view
  * @param {HTMLElement} menuNode the menu element of the component
  */
-function scrollIntoView(node, menuNode) {
+function scrollIntoView(node: HTMLElement, menuNode: HTMLElement): void {
   if (!node) {
     return
   }
@@ -39,11 +46,14 @@ function scrollIntoView(node, menuNode) {
 }
 
 /**
- * @param {HTMLElement} parent the parent node
- * @param {HTMLElement} child the child node
+ * @param {Element} parent the parent node
+ * @param {Element} child the child node
  * @return {Boolean} whether the parent is the child or the child is in the parent
  */
-function isOrContainsNode(parent, child) {
+function isOrContainsNode(
+  parent: Element,
+  child: Element | EventTarget,
+): boolean {
   return (
     parent === child ||
     (child instanceof Node && parent.contains && parent.contains(child))
@@ -58,8 +68,8 @@ function isOrContainsNode(parent, child) {
  * @param {Number} time the time to wait
  * @return {Function} the debounced function
  */
-function debounce(fn, time) {
-  let timeoutId
+function debounce(fn: Function, time: number): Function {
+  let timeoutId: NodeJS.Timeout
 
   function cancel() {
     if (timeoutId) {
@@ -67,7 +77,7 @@ function debounce(fn, time) {
     }
   }
 
-  function wrapper(...args) {
+  function wrapper(...args: any[]) {
     cancel()
     timeoutId = setTimeout(() => {
       timeoutId = null
@@ -87,8 +97,10 @@ function debounce(fn, time) {
  * @param {...Function} fns the event handler functions
  * @return {Function} the event handler to add to an element
  */
-function callAllEventHandlers(...fns) {
-  return (event, ...args) =>
+function callAllEventHandlers(
+  ...fns: Function[]
+): (event: DownshiftEvent, ...args: any[]) => boolean {
+  return (event: DownshiftEvent, ...args: any[]): boolean =>
     fns.some(fn => {
       if (fn) {
         fn(event, ...args)
@@ -101,8 +113,10 @@ function callAllEventHandlers(...fns) {
     })
 }
 
-function handleRefs(...refs) {
-  return node => {
+function handleRefs(
+  ...refs: (React.MutableRefObject<Element> | ((node: Element) => void))[]
+) {
+  return (node: Element) => {
     refs.forEach(ref => {
       if (typeof ref === 'function') {
         ref(node)
@@ -117,7 +131,7 @@ function handleRefs(...refs) {
  * This generates a unique ID for an instance of Downshift
  * @return {String} the unique ID
  */
-function generateId() {
+function generateId(): string {
   return String(idCounter++)
 }
 
@@ -125,14 +139,14 @@ function generateId() {
  * This is only used in tests
  * @param {Number} num the number to set the idCounter to
  */
-function setIdCounter(num) {
+function setIdCounter(num: number): void {
   idCounter = num
 }
 
 /**
  * Resets idCounter to 0. Used for SSR.
  */
-function resetIdCounter() {
+function resetIdCounter(): void {
   idCounter = 0
 }
 
@@ -144,7 +158,11 @@ function resetIdCounter() {
  * @param {Object} param the downshift state and other relevant properties
  * @return {String} the a11y status message
  */
-function getA11yStatusMessage({isOpen, resultCount, previousResultCount}) {
+function getA11yStatusMessage<Item>({
+  isOpen,
+  resultCount,
+  previousResultCount,
+}: A11yStatusMessageOptions<Item>) {
   if (!isOpen) {
     return ''
   }
@@ -169,7 +187,7 @@ function getA11yStatusMessage({isOpen, resultCount, previousResultCount}) {
  * @param {*} defaultValue the value if arg is falsey not defined
  * @return {*} the arg or it's first item
  */
-function unwrapArray(arg, defaultValue) {
+function unwrapArray(arg: Array<any>, defaultValue: any) {
   arg = Array.isArray(arg) ? /* istanbul ignore next (preact) */ arg[0] : arg
   if (!arg && defaultValue) {
     return defaultValue
@@ -182,12 +200,13 @@ function unwrapArray(arg, defaultValue) {
  * @param {Object} element (P)react element
  * @return {Boolean} whether it's a DOM element
  */
-function isDOMElement(element) {
+function isDOMElement(element: React.ReactElement): boolean {
   /* istanbul ignore if */
   if (isPreact) {
     // then this is preact or preact X
     return (
-      typeof element.type === 'string' || typeof element.nodeName === 'string'
+      typeof element.type === 'string' ||
+      typeof (element as any).nodeName === 'string'
     )
   }
 
@@ -199,12 +218,12 @@ function isDOMElement(element) {
  * @param {Object} element (P)react element
  * @return {Object} the props
  */
-function getElementProps(element) {
+function getElementProps(element: React.ReactElement) {
   // props for react, attributes for preact
 
   /* istanbul ignore if */
   if (isPreact) {
-    return element.props || element.attributes
+    return element.props || (element as any).attributes
   }
 
   return element.props
@@ -216,7 +235,7 @@ function getElementProps(element) {
  * @param {String} fnName the function name
  * @param {String} propName the prop name
  */
-function requiredProp(fnName, propName) {
+function requiredProp(fnName: string, propName: string): void {
   // eslint-disable-next-line no-console
   console.error(`The property "${propName}" is required in "${fnName}"`)
 }
@@ -232,11 +251,11 @@ const stateKeys = [
  * @param {Object} state the state object
  * @return {Object} state that is relevant to downshift
  */
-function pickState(state = {}) {
-  const result = {}
+function pickState<S>(state: S = {} as S): S {
+  const result: S = {} as S
   stateKeys.forEach(k => {
     if (state.hasOwnProperty(k)) {
-      result[k] = state[k]
+      result[k as keyof S] = state[k as keyof S]
     }
   })
   return result
@@ -253,12 +272,15 @@ function pickState(state = {}) {
  * @param {Object} props The props that may contain controlled values.
  * @returns {Object} The merged controlled state.
  */
-function getState(state, props) {
-  return Object.keys(state).reduce((prevState, key) => {
-    prevState[key] = isControlledProp(props, key) ? props[key] : state[key]
+function getState<S, P extends S>(state: S, props: P): S {
+  return (Object.keys(state) as (keyof S)[]).reduce(
+    (prevState: S, key: keyof S) => {
+      prevState[key] = isControlledProp(props, key) ? props[key] : state[key]
 
-    return prevState
-  }, {})
+      return prevState
+    },
+    {} as S,
+  )
 }
 
 /**
@@ -270,7 +292,7 @@ function getState(state, props) {
  * @param {String} key the key to check
  * @return {Boolean} whether it is a controlled controlled prop
  */
-function isControlledProp(props, key) {
+function isControlledProp<P>(props: P, key: keyof P): boolean {
   return props[key] !== undefined
 }
 
@@ -279,7 +301,7 @@ function isControlledProp(props, key) {
  * @param {Object} event a keyboardEvent object
  * @return {String} keyboard key
  */
-function normalizeArrowKey(event) {
+function normalizeArrowKey(event: React.KeyboardEvent): string {
   const {key, keyCode} = event
   /* istanbul ignore next (ie) */
   if (keyCode >= 37 && keyCode <= 40 && key.indexOf('Arrow') !== 0) {
@@ -293,7 +315,7 @@ function normalizeArrowKey(event) {
  * @param {*} obj any things
  * @return {Boolean} whether it's object literal
  */
-function isPlainObject(obj) {
+function isPlainObject(obj: Object): boolean {
   return Object.prototype.toString.call(obj) === '[object Object]'
 }
 
@@ -301,20 +323,13 @@ function isPlainObject(obj) {
  * Returns the new index in the list, in a circular way. If next value is out of bonds from the total,
  * it will wrap to either 0 or itemCount - 1.
  *
- * @param {number} moveAmount Number of positions to move. Negative to move backwards, positive forwards.
- * @param {number} baseIndex The initial position to move from.
- * @param {number} itemCount The total number of items.
- * @param {Function} getItemNodeFromIndex Used to check if item is disabled.
- * @param {boolean} circular Specify if navigation is circular. Default is true.
+ * @param {GetNextIndexOptions} options Options used to calculate the next index.
  * @returns {number} The new index after the move.
  */
-function getNextWrappingIndex(
-  moveAmount,
-  baseIndex,
-  itemCount,
-  getItemNodeFromIndex,
-  circular = true,
-) {
+function getNextWrappingIndex(options: GetNextIndexOptions): number {
+  const {moveAmount, itemCount, getItemNodeFromIndex, circular = true} = options
+  let {baseIndex} = options
+
   if (itemCount === 0) {
     return -1
   }
@@ -337,13 +352,13 @@ function getNextWrappingIndex(
     newIndex = circular ? 0 : itemsLastIndex
   }
 
-  const nonDisabledNewIndex = getNextNonDisabledIndex(
+  const nonDisabledNewIndex = getNextNonDisabledIndex({
     moveAmount,
-    newIndex,
+    baseIndex: newIndex,
     itemCount,
     getItemNodeFromIndex,
     circular,
-  )
+  })
 
   if (nonDisabledNewIndex === -1) {
     return baseIndex >= itemCount ? -1 : baseIndex
@@ -355,20 +370,17 @@ function getNextWrappingIndex(
 /**
  * Returns the next index in the list of an item that is not disabled.
  *
- * @param {number} moveAmount Number of positions to move. Negative to move backwards, positive forwards.
- * @param {number} baseIndex The initial position to move from.
- * @param {number} itemCount The total number of items.
- * @param {Function} getItemNodeFromIndex Used to check if item is disabled.
- * @param {boolean} circular Specify if navigation is circular. Default is true.
+ * @param {GetNextIndexOptions} options Options used to calculate the next index.
  * @returns {number} The new index. Returns baseIndex if item is not disabled. Returns next non-disabled item otherwise. If no non-disabled found it will return -1.
  */
-function getNextNonDisabledIndex(
-  moveAmount,
-  baseIndex,
-  itemCount,
-  getItemNodeFromIndex,
-  circular,
-) {
+function getNextNonDisabledIndex(options: GetNextIndexOptions): number {
+  const {
+    moveAmount,
+    baseIndex,
+    itemCount,
+    getItemNodeFromIndex,
+    circular,
+  } = options
   const currentElementNode = getItemNodeFromIndex(baseIndex)
   if (!currentElementNode || !currentElementNode.hasAttribute('disabled')) {
     return baseIndex
@@ -390,14 +402,20 @@ function getNextNonDisabledIndex(
 
   if (circular) {
     return moveAmount > 0
-      ? getNextNonDisabledIndex(1, 0, itemCount, getItemNodeFromIndex, false)
-      : getNextNonDisabledIndex(
-          -1,
-          itemCount - 1,
+      ? getNextNonDisabledIndex({
+          moveAmount: 1,
+          baseIndex: 0,
           itemCount,
           getItemNodeFromIndex,
-          false,
-        )
+          circular: false,
+        })
+      : getNextNonDisabledIndex({
+          moveAmount: -1,
+          baseIndex: itemCount - 1,
+          itemCount,
+          getItemNodeFromIndex,
+          circular: false,
+        })
   }
 
   return -1
@@ -407,18 +425,18 @@ function getNextNonDisabledIndex(
  * Checks if event target is within the downshift elements.
  *
  * @param {EventTarget} target Target to check.
- * @param {HTMLElement[]} downshiftElements The elements that form downshift (list, toggle button etc).
+ * @param {Element[]} downshiftElements The elements that form downshift (list, toggle button etc).
  * @param {Document} document The document.
  * @param {boolean} checkActiveElement Whether to also check activeElement.
  *
  * @returns {boolean} Whether or not the target is within downshift elements.
  */
 function targetWithinDownshift(
-  target,
-  downshiftElements,
-  document,
+  target: EventTarget,
+  downshiftElements: Element[],
+  document: Document,
   checkActiveElement = true,
-) {
+): boolean {
   return downshiftElements.some(
     contextNode =>
       contextNode &&
@@ -429,13 +447,20 @@ function targetWithinDownshift(
 }
 
 // eslint-disable-next-line import/no-mutable-exports
-let validateControlledUnchanged = noop
+let validateControlledUnchanged: <S, P extends S>(
+  state: S,
+  prevProps: P,
+  nextProps: P,
+) => void = noop
 /* istanbul ignore next */
-if (process.env.NODE_ENV  !== 'production') {
-  validateControlledUnchanged = (state, prevProps, nextProps) => {
+if (process.env.NODE_ENV !== 'production') {
+  validateControlledUnchanged = <S, P extends S>(
+    state: S,
+    prevProps: P,
+    nextProps: P,
+  ): void => {
     const warningDescription = `This prop should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled Downshift element for the lifetime of the component. More info: https://github.com/downshift-js/downshift#control-props`
-
-    Object.keys(state).forEach(propKey => {
+    ;(Object.keys(state) as (keyof S)[]).forEach((propKey: keyof S) => {
       if (
         prevProps[propKey] !== undefined &&
         nextProps[propKey] === undefined
@@ -480,5 +505,5 @@ export {
   targetWithinDownshift,
   getState,
   isControlledProp,
-  validateControlledUnchanged
+  validateControlledUnchanged,
 }

@@ -22,11 +22,14 @@ import {
 import downshiftSelectReducer from './reducer'
 import {validatePropTypes, defaultProps} from './utils'
 import * as stateChangeTypes from './stateChangeTypes'
+import {UseSelectProps, UseSelectReturnValue} from './types'
 
 useSelect.stateChangeTypes = stateChangeTypes
 
-function useSelect(userProps = {}) {
-  validatePropTypes(userProps, useSelect)
+function useSelect<Item>(
+  userProps: UseSelectProps<Item> = {items: []},
+): UseSelectReturnValue<Item> {
+  validatePropTypes(userProps, 'useSelect')
   // Props defaults and destructuring.
   const props = {
     ...defaultProps,
@@ -54,13 +57,19 @@ function useSelect(userProps = {}) {
   // Element efs.
   const toggleButtonRef = useRef(null)
   const menuRef = useRef(null)
-  const itemRefs = useRef({})
+  const itemRefs = useRef<{[s: string]: HTMLElement}>({})
   // used not to trigger menu blur action in some scenarios.
   const shouldBlurRef = useRef(true)
   // used to keep the inputValue clearTimeout object between renders.
   const clearTimeoutRef = useRef(null)
   // prevent id re-generation between renders.
-  const elementIds = useElementIds(props)
+  const elementIds = useElementIds({
+    getItemId: props.getItemId,
+    id: props.id,
+    labelId: props.labelId,
+    menuId: props.menuId,
+    toggleButtonId: props.toggleButtonId,
+  })
   // used to keep track of how many items we had on previous cycle.
   const previousResultCountRef = useRef()
   const isInitialMountRef = useRef(true)
@@ -72,7 +81,7 @@ function useSelect(userProps = {}) {
 
   // Some utils.
   const getItemNodeFromIndex = useCallback(
-    index => itemRefs.current[elementIds.getItemId(index)],
+    (index: number) => itemRefs.current[elementIds.getItemId(index)],
     [elementIds],
   )
 

@@ -27,7 +27,7 @@ describe('getItemProps', () => {
     })
 
     test('assign custom value passed by user to id', () => {
-      const getItemId = index => `my-custom-item-id-${index}`
+      const getItemId = (index: number) => `my-custom-item-id-${index}`
       const {result} = renderUseSelect({getItemId})
 
       expect(result.current.getItemProps({index: 0}).id).toEqual(getItemId(0))
@@ -56,20 +56,11 @@ describe('getItemProps', () => {
 
       expect(itemProps.onMouseMove).toBeUndefined()
       expect(itemProps.onClick).toBeUndefined()
-      // eslint-disable-next-line jest-dom/prefer-enabled-disabled
       expect(itemProps.disabled).toBe(true)
     })
   })
 
   describe('user props', () => {
-    test('are passed down', () => {
-      const {result} = renderUseSelect()
-
-      expect(
-        result.current.getItemProps({index: 0, foo: 'bar'}),
-      ).toHaveProperty('foo', 'bar')
-    })
-
     test('event handler onClick is called along with downshift handler', () => {
       const userOnClick = jest.fn()
       const {result} = renderUseSelect({initialIsOpen: true})

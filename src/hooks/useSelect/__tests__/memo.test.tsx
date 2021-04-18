@@ -1,9 +1,9 @@
 import React from 'react'
 import {renderUseSelect, renderSelect} from '../testUtils'
 import {items, defaultIds, MemoizedItem} from '../../testUtils'
+import {RenderItemOptions} from '../types'
 
 test('functions are memoized', () => {
-
   const {result, rerender} = renderUseSelect()
   const firstRenderResult = result.current
   rerender()
@@ -12,23 +12,25 @@ test('functions are memoized', () => {
 })
 
 test('will skip disabled items after component rerenders and items are memoized', () => {
-  function renderItem(props) {
+  function renderItem<Item>(props: RenderItemOptions<Item>): JSX.Element {
     return (
       <MemoizedItem
         key={props.index}
         disabled={props.index === items.length - 2}
-        {...props}
+        {...props as any} // ToDo: FIX THIS.
       />
     )
   }
 
-  const {keyDownOnMenu, menu, rerender} = renderSelect({
-    isOpen: true,
-    initialHighlightedIndex: items.length - 1,
-    renderItem,
-  })
+  const {keyDownOnMenu, menu, rerender} = renderSelect<string>(
+    {
+      isOpen: true,
+      initialHighlightedIndex: items.length - 1,
+    },
+    {renderItem},
+  )
 
-  rerender({renderItem, isOpen: true})
+  rerender({isOpen: true}, {renderItem})
   keyDownOnMenu('ArrowUp')
 
   expect(menu).toHaveAttribute(

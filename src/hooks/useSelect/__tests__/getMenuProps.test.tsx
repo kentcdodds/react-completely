@@ -10,7 +10,7 @@ import {
 import {renderUseSelect, renderSelect} from '../testUtils'
 import {defaultIds, items} from '../../testUtils'
 // eslint-disable-next-line import/default
-import utils from '../../utils'
+import * as utils from '../../utils'
 import * as stateChangeTypes from '../stateChangeTypes'
 import useSelect from '..'
 
@@ -269,13 +269,15 @@ describe('getMenuProps', () => {
   describe('event handlers', () => {
     describe('on keydown', () => {
       describe('character key', () => {
-        beforeEach(jest.useFakeTimers)
+        beforeEach(() => jest.useFakeTimers())
         afterEach(() => {
-          reactAct(() => jest.runAllTimers())
+          reactAct(() => {
+            jest.runAllTimers()
+          })
         })
         afterAll(jest.useRealTimers)
 
-        const startsWithCharacter = (option, character) => {
+        const startsWithCharacter = (option: string, character: string) => {
           return option.toLowerCase().startsWith(character.toLowerCase())
         }
 
@@ -304,7 +306,9 @@ describe('getMenuProps', () => {
             'aria-activedescendant',
             defaultIds.getItemId(3),
           )
-          reactAct(jest.runOnlyPendingTimers)
+          reactAct(() => {
+            jest.runOnlyPendingTimers()
+          })
           keyDownOnMenu(char)
 
           expect(menu).toHaveAttribute(
@@ -323,9 +327,13 @@ describe('getMenuProps', () => {
           })
 
           keyDownOnMenu(char)
-          reactAct(jest.runOnlyPendingTimers)
+          reactAct(() => {
+            jest.runOnlyPendingTimers()
+          })
           keyDownOnMenu(char)
-          reactAct(jest.runOnlyPendingTimers)
+          reactAct(() => {
+            jest.runOnlyPendingTimers()
+          })
           keyDownOnMenu(char)
 
           expect(menu).toHaveAttribute('aria-activedescendant', expectedIndex)
@@ -354,7 +362,9 @@ describe('getMenuProps', () => {
           })
 
           keyDownOnMenu(chars[0])
-          reactAct(() => jest.advanceTimersByTime(200))
+          reactAct(() => {
+            jest.advanceTimersByTime(200)
+          })
           keyDownOnMenu(chars[1])
 
           expect(menu).toHaveAttribute('aria-activedescendant', expectedIndex)
@@ -372,9 +382,13 @@ describe('getMenuProps', () => {
           })
 
           keyDownOnMenu(chars[0])
-          reactAct(() => jest.advanceTimersByTime(200))
+          reactAct(() => {
+            jest.advanceTimersByTime(200)
+          })
           keyDownOnMenu(chars[1])
-          reactAct(jest.runOnlyPendingTimers)
+          reactAct(() => {
+            jest.runOnlyPendingTimers()
+          })
           keyDownOnMenu(chars[2])
 
           expect(menu).toHaveAttribute('aria-activedescendant', expectedIndex)
@@ -391,7 +405,9 @@ describe('getMenuProps', () => {
           })
 
           keyDownOnMenu(char)
-          reactAct(() => jest.advanceTimersByTime(200)) // wait some time but not enough to trigger debounce.
+          reactAct(() => {
+            jest.advanceTimersByTime(200)
+          }) // wait some time but not enough to trigger debounce.
           keyDownOnMenu(char)
 
           // highlight should stay on the first item starting with 'C'
@@ -803,14 +819,14 @@ describe('getMenuProps', () => {
       test('tab it closes the menu and does not select highlighted item', () => {
         const {toggleButton, tab, getItems} = renderSelect(
           {initialIsOpen: true, initialHighlightedIndex: 2},
-          ui => {
-            return (
+          {
+            uiCallback: ui => (
               <>
                 <div tabIndex={0}>First element</div>
                 {ui}
                 <div tabIndex={0}>Second element</div>
               </>
-            )
+            ),
           },
         )
 
@@ -823,14 +839,14 @@ describe('getMenuProps', () => {
       test('shift+tab it closes the menu', () => {
         const {toggleButton, tab, getItems} = renderSelect(
           {initialIsOpen: true, initialHighlightedIndex: 2},
-          ui => {
-            return (
+          {
+            uiCallback: ui => (
               <>
                 <div tabIndex={0}>First element</div>
                 {ui}
                 <div tabIndex={0}>Second element</div>
               </>
-            )
+            ),
           },
         )
 
@@ -885,13 +901,13 @@ describe('getMenuProps', () => {
       test('by focusing another element should behave as a normal blur', () => {
         const {toggleButton, getItems} = renderSelect(
           {initialIsOpen: true, initialHighlightedIndex: 2},
-          ui => {
-            return (
+          {
+            uiCallback: ui => (
               <>
                 {ui}
                 <div tabIndex={0}>Second element</div>
               </>
-            )
+            ),
           },
         )
 
@@ -956,7 +972,7 @@ describe('getMenuProps', () => {
       jest
         .spyOn(utils, 'useGetterPropsCalledChecker')
         .mockImplementation(useGetterPropsCalledChecker)
-      jest.spyOn(console, 'error').mockImplementation(() => {})
+      jest.spyOn(console, 'error').mockImplementation(jest.fn())
     })
 
     test('will be displayed if getMenuProps is not called', () => {
@@ -966,7 +982,9 @@ describe('getMenuProps', () => {
       })
 
       // eslint-disable-next-line no-console
-      expect(console.error.mock.calls[0][0]).toMatchInlineSnapshot(
+      expect(
+        (console.error as jest.Mock).mock.calls[0][0],
+      ).toMatchInlineSnapshot(
         `"downshift: You forgot to call the getMenuProps getter function on your component / element."`,
       )
     })
@@ -1001,7 +1019,9 @@ describe('getMenuProps', () => {
       })
 
       // eslint-disable-next-line no-console
-      expect(console.error.mock.calls[0][0]).toMatchInlineSnapshot(
+      expect(
+        (console.error as jest.Mock).mock.calls[0][0],
+      ).toMatchInlineSnapshot(
         `"downshift: The ref prop \\"ref\\" from getMenuProps was not applied correctly on your element."`,
       )
     })

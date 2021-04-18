@@ -6,5 +6,6 @@ module.exports = Object.assign(jestConfig, {
     '.macro.js$',
     '<rootDir>/src/stateChangeTypes.js',
   ],
-  setupFilesAfterEnv: ['<rootDir>/test/setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
+  moduleFileExtensions: ['ts', 'js', 'tsx', 'jsx'],
 })

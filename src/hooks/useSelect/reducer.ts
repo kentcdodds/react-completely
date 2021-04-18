@@ -3,11 +3,15 @@ import {getHighlightedIndexOnOpen, getDefaultValue} from '../utils'
 import commonReducer from '../reducer'
 import {getItemIndexByCharacterKey} from './utils'
 import * as stateChangeTypes from './stateChangeTypes'
+import {UseSelectState, UseSelectDispatchAction} from './types'
 
-/* eslint-disable complexity */
-export default function downshiftSelectReducer(state, action) {
+// eslint-disable-next-line complexity
+export default function downshiftSelectReducer<Item>(
+  state: UseSelectState<Item>,
+  action: UseSelectDispatchAction<Item>,
+): UseSelectState<Item> {
   const {type, props, shiftKey} = action
-  let changes
+  let changes: Partial<UseSelectState<Item>>
 
   switch (type) {
     case stateChangeTypes.ItemClick:
@@ -22,13 +26,15 @@ export default function downshiftSelectReducer(state, action) {
       {
         const lowercasedKey = action.key
         const inputValue = `${state.inputValue}${lowercasedKey}`
-        const itemIndex = getItemIndexByCharacterKey(
-          inputValue,
-          state.selectedItem ? props.items.indexOf(state.selectedItem) : -1,
-          props.items,
-          props.itemToString,
-          action.getItemNodeFromIndex,
-        )
+        const itemIndex = getItemIndexByCharacterKey({
+          getItemNodeFromIndex: action.getItemNodeFromIndex,
+          items: props.items,
+          itemToString: props.itemToString,
+          highlightedIndex: state.selectedItem
+            ? props.items.indexOf(state.selectedItem)
+            : -1,
+          keysSoFar: inputValue,
+        })
 
         changes = {
           inputValue,
@@ -76,25 +82,25 @@ export default function downshiftSelectReducer(state, action) {
       break
     case stateChangeTypes.MenuKeyDownHome:
       changes = {
-        highlightedIndex: getNextNonDisabledIndex(
-          1,
-          0,
-          props.items.length,
-          action.getItemNodeFromIndex,
-          false,
-        ),
+        highlightedIndex: getNextNonDisabledIndex({
+          moveAmount: 1,
+          baseIndex: 0,
+          itemCount: props.items.length,
+          getItemNodeFromIndex: action.getItemNodeFromIndex,
+          circular: false,
+        }),
       }
 
       break
     case stateChangeTypes.MenuKeyDownEnd:
       changes = {
-        highlightedIndex: getNextNonDisabledIndex(
-          -1,
-          props.items.length - 1,
-          props.items.length,
-          action.getItemNodeFromIndex,
-          false,
-        ),
+        highlightedIndex: getNextNonDisabledIndex({
+          moveAmount: -1,
+          baseIndex: props.items.length - 1,
+          itemCount: props.items.length,
+          getItemNodeFromIndex: action.getItemNodeFromIndex,
+          circular: false,
+        }),
       }
 
       break
@@ -116,13 +122,13 @@ export default function downshiftSelectReducer(state, action) {
       {
         const lowercasedKey = action.key
         const inputValue = `${state.inputValue}${lowercasedKey}`
-        const highlightedIndex = getItemIndexByCharacterKey(
-          inputValue,
-          state.highlightedIndex,
-          props.items,
-          props.itemToString,
-          action.getItemNodeFromIndex,
-        )
+        const highlightedIndex = getItemIndexByCharacterKey({
+          getItemNodeFromIndex: action.getItemNodeFromIndex,
+          items: props.items,
+          itemToString: props.itemToString,
+          highlightedIndex: state.highlightedIndex,
+          keysSoFar: inputValue,
+        })
 
         changes = {
           inputValue,
@@ -134,25 +140,25 @@ export default function downshiftSelectReducer(state, action) {
       break
     case stateChangeTypes.MenuKeyDownArrowDown:
       changes = {
-        highlightedIndex: getNextWrappingIndex(
-          shiftKey ? 5 : 1,
-          state.highlightedIndex,
-          props.items.length,
-          action.getItemNodeFromIndex,
-          props.circularNavigation,
-        ),
+        highlightedIndex: getNextWrappingIndex({
+          moveAmount: shiftKey ? 5 : 1,
+          baseIndex: state.highlightedIndex,
+          itemCount: props.items.length,
+          getItemNodeFromIndex: action.getItemNodeFromIndex,
+          circular: props.circularNavigation,
+        }),
       }
 
       break
     case stateChangeTypes.MenuKeyDownArrowUp:
       changes = {
-        highlightedIndex: getNextWrappingIndex(
-          shiftKey ? -5 : -1,
-          state.highlightedIndex,
-          props.items.length,
-          action.getItemNodeFromIndex,
-          props.circularNavigation,
-        ),
+        highlightedIndex: getNextWrappingIndex({
+          moveAmount: shiftKey ? -5 : -1,
+          baseIndex: state.highlightedIndex,
+          itemCount: props.items.length,
+          getItemNodeFromIndex: action.getItemNodeFromIndex,
+          circular: props.circularNavigation,
+        }),
       }
       break
 
@@ -171,4 +177,3 @@ export default function downshiftSelectReducer(state, action) {
     ...changes,
   }
 }
-/* eslint-enable complexity */

@@ -1,14 +1,16 @@
 import PropTypes from 'prop-types'
 import {defaultProps as commonDefaultProps} from '../utils'
 import {noop} from '../../utils'
+import {GetItemIndexByCharacterKeyOptions} from './types'
+import {A11yStatusMessageOptions} from '../../types'
 
-function getItemIndexByCharacterKey(
+function getItemIndexByCharacterKey<Item>({
   keysSoFar,
   highlightedIndex,
   items,
   itemToString,
   getItemNodeFromIndex,
-) {
+}: GetItemIndexByCharacterKeyOptions<Item>) {
   const lowerCasedKeysSoFar = keysSoFar.toLowerCase()
 
   for (let index = 0; index < items.length; index++) {
@@ -74,7 +76,11 @@ const propTypes = {
  * @param {Object} param the downshift state and other relevant properties
  * @return {String} the a11y status message
  */
-function getA11yStatusMessage({isOpen, resultCount, previousResultCount}) {
+function getA11yStatusMessage<Item>({
+  isOpen,
+  resultCount,
+  previousResultCount,
+}: A11yStatusMessageOptions<Item>): string {
   if (!isOpen) {
     return ''
   }
@@ -98,11 +104,14 @@ const defaultProps = {
 }
 
 // eslint-disable-next-line import/no-mutable-exports
-let validatePropTypes = noop
+let validatePropTypes = noop as (
+  options: any,
+  callerName: string,
+) => void
 /* istanbul ignore next */
 if (process.env.NODE_ENV !== 'production') {
-  validatePropTypes = (options, caller) => {
-    PropTypes.checkPropTypes(propTypes, options, 'prop', caller.name)
+  validatePropTypes = (options: any, callerName: string): void => {
+    PropTypes.checkPropTypes(propTypes, options, 'prop', callerName)
   }
 }
 

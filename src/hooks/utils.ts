@@ -16,8 +16,10 @@ import {
   noop,
 } from '../utils'
 import setStatus from '../set-a11y-status'
+import { UseSelectState } from './useSelect/types'
+import { UseControlPropsValidatorProps, UseElementIDsProps, UseElementIDsResult } from './types'
 
-const dropdownDefaultStateValues = {
+const dropdownDefaultStateValues: UseSelectState<null> = {
   highlightedIndex: -1,
   isOpen: false,
   selectedItem: null,
@@ -100,7 +102,7 @@ function useElementIds({
   getItemId,
   toggleButtonId,
   inputId,
-}) {
+}: UseElementIDsProps): UseElementIDsResult {
   const elementIdsRef = useRef({
     labelId: labelId || `${id}-label`,
     menuId: menuId || `${id}-menu`,
@@ -501,10 +503,10 @@ function useScrollIntoView({
 }
 
 // eslint-disable-next-line import/no-mutable-exports
-let useControlPropsValidator = noop
+let useControlPropsValidator: (props: UseControlPropsValidatorProps) => void = noop
 /* istanbul ignore next */
 if (process.env.NODE_ENV !== 'production') {
-  useControlPropsValidator = ({isInitialMount, props, state}) => {
+  useControlPropsValidator = ({isInitialMount, props, state}: UseControlPropsValidatorProps) => {
     // used for checking when props are moving from controlled to uncontrolled.
     const prevPropsRef = useRef(props)
 
