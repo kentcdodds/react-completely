@@ -138,7 +138,7 @@ export interface GetPropsWithRefKey {
 export interface GetItemPropsOptions<Item>
   extends React.HTMLProps<HTMLElement> {
   index?: number
-  item: Item
+  item?: Item
   isSelected?: boolean
   disabled?: boolean
 }
