@@ -116,6 +116,11 @@ export interface GetInputPropsOptions
 export interface GetLabelPropsOptions
   extends React.HTMLProps<HTMLLabelElement> {}
 
+export interface GetLabelPropsReturnValue  {
+  htmlFor: string;
+  id: string;
+}
+
 export interface GetToggleButtonPropsOptions
   extends React.HTMLProps<HTMLButtonElement> {
   disabled?: boolean
@@ -149,7 +154,7 @@ export interface PropGetters<Item> {
     otherOptions?: GetPropsCommonOptions,
   ) => any
   getToggleButtonProps: (options?: GetToggleButtonPropsOptions) => any
-  getLabelProps: (options?: GetLabelPropsOptions) => any
+  getLabelProps: (options?: GetLabelPropsOptions) => GetLabelPropsReturnValue
   getMenuProps: (
     options?: GetMenuPropsOptions,
     otherOptions?: GetPropsCommonOptions,
