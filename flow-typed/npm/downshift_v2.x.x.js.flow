@@ -45,7 +45,7 @@ declare module downshift {
     highlightedIndex: number | null;
     inputValue: string | null;
     isOpen: boolean;
-    selectedItem: Item;
+    selectedItem: Item | null;
   }
   declare export interface DownshiftProps<Item> {
     defaultSelectedItem?: Item;
@@ -209,7 +209,7 @@ declare module downshift {
     openMenu: (cb?: Callback) => void;
     closeMenu: (cb?: Callback) => void;
     toggleMenu: (otherStateToSet?: {}, cb?: Callback) => void;
-    selectItem: (item: Item, otherStateToSet?: {}, cb?: Callback) => void;
+    selectItem: (item: Item | null, otherStateToSet?: {}, cb?: Callback) => void;
     selectItemAtIndex: (
       index: number,
       otherStateToSet?: {},
