@@ -16,13 +16,11 @@ jobs:
     if: ${{ !contains(github.head_ref, 'all-contributors') }}
     strategy:
       matrix:
-        node: [12]
+        node: [12, 14, 16]
     runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.6.0
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
+        uses: styfle/cancel-workflow-action@0.9.0
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v2
 
@@ -32,7 +30,7 @@ jobs:
           && sudo sysctl -p
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
 
@@ -58,17 +56,15 @@ jobs:
       github.ref) && github.event_name == 'push' }}
     steps:
       - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.6.0
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
+        uses: styfle/cancel-workflow-action@0.9.0
 
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v2
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
-          node-version: 12
+          node-version: 14
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
