@@ -1,15 +1,23 @@
-{
+  {
   "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true,
+    "esModuleInterop": true,
     "jsx": "react",
-    "noUnusedLocals": true,
+    "moduleResolution": "node",
+    "target": "es2020",
     "strict": true,
-    "noImplicitReturns": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noEmitOnError": true,
-    "forceConsistentCasingInFileNames": true,
-    "lib": ["es2016", "dom"],
-    "types": ["cypress"]
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "noUncheckedIndexedAccess": true,
+    "module": "ESNext",
+    "typeRoots": ["./typings", "./node_modules/@types"],
+    "strictNullChecks": true,
+    "outDir": "dist",
   },
-  "include": ["test/**/*.tsx"]
+  "include": [
+    "typings/**/*.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+  ],
 }

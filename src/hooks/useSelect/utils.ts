@@ -1,27 +1,29 @@
 import PropTypes from 'prop-types'
 import {defaultProps as commonDefaultProps} from '../utils'
 import {noop} from '../../utils'
+import {A11yStatusMessageOptions} from '../../types'
+import {GetItemIndexByCharacterKeyOptions} from './types'
 
-function getItemIndexByCharacterKey(
+export function getItemIndexByCharacterKey<Item>({
   keysSoFar,
   highlightedIndex,
   items,
   itemToString,
   getItemNodeFromIndex,
-) {
+}: GetItemIndexByCharacterKeyOptions<Item>) {
   const lowerCasedKeysSoFar = keysSoFar.toLowerCase()
 
   for (let index = 0; index < items.length; index++) {
     const offsetIndex = (index + highlightedIndex + 1) % items.length
 
     if (
-      itemToString(items[offsetIndex])
+      itemToString(items[offsetIndex] ?? null)
         .toLowerCase()
         .startsWith(lowerCasedKeysSoFar)
     ) {
       const element = getItemNodeFromIndex(offsetIndex)
 
-      if (!(element && element.hasAttribute('disabled'))) {
+      if (!element?.hasAttribute('disabled')) {
         return offsetIndex
       }
     }
@@ -74,7 +76,11 @@ const propTypes = {
  * @param {Object} param the downshift state and other relevant properties
  * @return {String} the a11y status message
  */
-function getA11yStatusMessage({isOpen, resultCount, previousResultCount}) {
+function getA11yStatusMessage<Item>({
+  isOpen,
+  resultCount,
+  previousResultCount,
+}: A11yStatusMessageOptions<Item>): string {
   if (!isOpen) {
     return ''
   }
@@ -92,18 +98,19 @@ function getA11yStatusMessage({isOpen, resultCount, previousResultCount}) {
   return ''
 }
 
-const defaultProps = {
+export const defaultProps = {
   ...commonDefaultProps,
   getA11yStatusMessage,
 }
 
 // eslint-disable-next-line import/no-mutable-exports
-let validatePropTypes = noop
+export let validatePropTypes = noop as (
+  options: unknown,
+  caller: Function,
+) => void
 /* istanbul ignore next */
 if (process.env.NODE_ENV !== 'production') {
-  validatePropTypes = (options, caller) => {
+  validatePropTypes = (options: unknown, caller: Function): void => {
     PropTypes.checkPropTypes(propTypes, options, 'prop', caller.name)
   }
 }
-
-export {getItemIndexByCharacterKey, defaultProps, validatePropTypes}

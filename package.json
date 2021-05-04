@@ -73,7 +73,9 @@
   },
   "devDependencies": {
     "@babel/helpers": "^7.13.10",
+    "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-typescript": "^8.2.1",
     "@testing-library/cypress": "^7.0.6",
     "@testing-library/dom": "^7.30.3",
     "@testing-library/jest-dom": "^5.11.10",
@@ -83,6 +85,8 @@
     "@testing-library/user-event": "^13.1.4",
     "@types/jest": "^26.0.22",
     "@types/react": "^17.0.3",
+    "@typescript-eslint/eslint-plugin": "^4.22.1",
+    "@typescript-eslint/parser": "^4.22.1",
     "babel-plugin-macros": "^3.0.1",
     "babel-plugin-no-side-effect-class-properties": "0.0.7",
     "babel-preset-react-native": "^4.0.1",
@@ -103,38 +107,28 @@
     "react-dom": "^17.0.2",
     "react-native": "^0.64.0",
     "react-test-renderer": "^17.0.2",
-    "rollup-plugin-babel": "^4.4.0",
     "serve": "^11.3.2",
     "start-server-and-test": "^1.12.1",
     "typescript": "^4.2.4"
   },
   "eslintConfig": {
+    "settings": {
+      "import/resolver": {
+        "node": {
+          "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        }
+      }
+    },
     "extends": "./node_modules/kcd-scripts/eslint.js",
     "rules": {
-      "eqeqeq": "off",
-      "import/no-useless-path-segments": "off",
-      "import/no-unassigned-import": "off",
-      "max-lines": "off",
-      "max-lines-per-function": "off",
-      "no-eq-null": "off",
       "react/jsx-indent": "off",
       "react/prop-types": "off",
+      "max-lines-per-function": "off",
+  
       "jsx-a11y/label-has-for": "off",
       "jsx-a11y/label-has-associated-control": "off",
       "jsx-a11y/autocomplete-valid": "off",
-      "complexity": [
-        "error",
-        12
-      ],
-      
-      "no-unsafe-optional-chaining" : "off",
-      "no-loss-of-precision" : "off",
-      "no-unreachable-loop": "off",
-      "no-useless-backreference": "off",
-      "default-case-last": "off",
-      "no-nonoctal-decimal-escape" : "off",
-      "id-denylist": "off",
-
+  
       "testing-library/prefer-user-event": "off",
       "testing-library/no-node-access": "off",
       "testing-library/no-container": "off",
@@ -142,9 +136,7 @@
     },
     "overrides": [
       {
-        "files": [
-          "cypress/**/*.js"
-        ],
+        "files": ["cypress/**/*.js"],
         "rules": {
           "testing-library/prefer-screen-queries": "off",
           "testing-library/await-async-query": "off"

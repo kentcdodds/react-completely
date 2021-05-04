@@ -22,13 +22,15 @@ export default function downshiftSelectReducer(state, action) {
       {
         const lowercasedKey = action.key
         const inputValue = `${state.inputValue}${lowercasedKey}`
-        const itemIndex = getItemIndexByCharacterKey(
-          inputValue,
-          state.selectedItem ? props.items.indexOf(state.selectedItem) : -1,
-          props.items,
-          props.itemToString,
-          action.getItemNodeFromIndex,
-        )
+        const itemIndex = getItemIndexByCharacterKey({
+          keysSoFar: inputValue,
+          highlightedIndex: state.selectedItem
+            ? props.items.indexOf(state.selectedItem)
+            : -1,
+          items: props.items,
+          itemToString: props.itemToString,
+          getItemNodeFromIndex: action.getItemNodeFromIndex,
+        })
 
         changes = {
           inputValue,
@@ -116,13 +118,13 @@ export default function downshiftSelectReducer(state, action) {
       {
         const lowercasedKey = action.key
         const inputValue = `${state.inputValue}${lowercasedKey}`
-        const highlightedIndex = getItemIndexByCharacterKey(
-          inputValue,
-          state.highlightedIndex,
-          props.items,
-          props.itemToString,
-          action.getItemNodeFromIndex,
-        )
+        const highlightedIndex = getItemIndexByCharacterKey({
+          keysSoFar: inputValue,
+          highlightedIndex: state.highlightedIndex,
+          items: props.items,
+          itemToString: props.itemToString,
+          getItemNodeFromIndex: action.getItemNodeFromIndex,
+        })
 
         changes = {
           inputValue,
