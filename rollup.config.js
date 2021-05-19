@@ -1,5 +1,6 @@
 const commonjs = require('@rollup/plugin-commonjs')
 const babel = require('rollup-plugin-babel')
+// eslint-disable-next-line import/extensions
 const config = require('kcd-scripts/dist/config/rollup.config.js')
 const babelPluginIndex = config.plugins.findIndex(
   plugin => plugin.name === 'babel',

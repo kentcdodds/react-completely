@@ -16,7 +16,7 @@ import {
   noop,
 } from '../utils'
 import setStatus from '../set-a11y-status'
-
+import {isReactNative} from '../is.macro'
 const dropdownDefaultStateValues = {
   highlightedIndex: -1,
   isOpen: false,
@@ -451,7 +451,7 @@ function useA11yMessageSetter(
 ) {
   // Sets a11y status message on changes in state.
   useEffect(() => {
-    if (isInitialMount) {
+    if (isInitialMount || isReactNative) {
       return
     }
 

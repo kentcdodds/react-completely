@@ -126,15 +126,13 @@
         "error",
         12
       ],
-      
-      "no-unsafe-optional-chaining" : "off",
-      "no-loss-of-precision" : "off",
+      "no-unsafe-optional-chaining": "off",
+      "no-loss-of-precision": "off",
       "no-unreachable-loop": "off",
       "no-useless-backreference": "off",
       "default-case-last": "off",
-      "no-nonoctal-decimal-escape" : "off",
+      "no-nonoctal-decimal-escape": "off",
       "id-denylist": "off",
-
       "testing-library/prefer-user-event": "off",
       "testing-library/no-node-access": "off",
       "testing-library/no-container": "off",
