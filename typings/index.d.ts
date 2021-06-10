@@ -79,6 +79,7 @@ export interface DownshiftProps<Item> {
 }
 
 export interface Environment {
+  Node: typeof window.Node
   addEventListener: typeof window.addEventListener
   removeEventListener: typeof window.removeEventListener
   document: Document
