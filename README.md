@@ -10,7 +10,7 @@ autocomplete, combobox or select dropdown components.</p>
 > [Read the docs](https://downshift-js.com) |
 > [See the intro blog post](https://kentcdodds.com/blog/introducing-downshift-for-react)
 > |
-> [Listen to the Episode 79 of the Full Stack Radio podcast](https://simplecast.com/s/f2e65eaf)
+> [Listen to the Episode 79 of the Full Stack Radio podcast](https://fullstackradio.com/79)
 
 <hr />
 
