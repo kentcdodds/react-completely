@@ -141,7 +141,7 @@ function resetIdCounter() {
 
 /**
  * Default implementation for status message. Only added when menu is open.
- * Will specift if there are results in the list, and if so, how many,
+ * Will specify if there are results in the list, and if so, how many,
  * and what keys are relevant.
  *
  * @param {Object} param the downshift state and other relevant properties
